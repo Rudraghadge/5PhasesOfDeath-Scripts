@@ -1,0 +1,55 @@
+using UnityEngine;
+
+public class DoorController : MonoBehaviour
+{
+    [Header("Door Settings")]
+    public Transform door;
+    public float openAngle = 90f;
+    public float closeAngle = 0f;
+    public float speed = 2f;
+    public bool opening = false;
+
+    [Header("Rotation Axis (Optional)")]
+    public bool rotateOnX = false;
+    public bool rotateOnY = true;
+    public bool rotateOnZ = false;
+
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioClip openSound;
+    public AudioClip closeSound;
+
+    private Quaternion openRotation;
+    private Quaternion closeRotation;
+
+    void Start()
+    {
+        closeRotation = door.localRotation;
+
+        Vector3 openRot = door.localEulerAngles;
+        if (rotateOnX) openRot.x += openAngle;
+        if (rotateOnY) openRot.y += openAngle;
+        if (rotateOnZ) openRot.z += openAngle;
+
+        openRotation = Quaternion.Euler(openRot);
+    }
+
+    void Update()
+    {
+        Quaternion targetRot = opening ? openRotation : closeRotation;
+        door.localRotation = Quaternion.Lerp(door.localRotation, targetRot, Time.deltaTime * speed);
+    }
+
+    public void ToggleDoor()
+    {
+        opening = !opening;
+
+        if (audioSource != null)
+        {
+            if (opening && openSound != null)
+                audioSource.PlayOneShot(openSound);
+            else if (!opening && closeSound != null)
+                audioSource.PlayOneShot(closeSound);
+        }
+    }
+}
