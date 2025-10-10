@@ -1,0 +1,48 @@
+using UnityEngine;
+using TMPro;
+
+public class Raycasting : MonoBehaviour
+{
+    public float interactDistance = 5f;
+    public TMP_Text interactText;
+
+    private float toTarget;
+    public static float distanceFromTarget;
+
+    void Update()
+    {
+        RaycastHit hit;
+
+        // Cast a ray from the player forward
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, interactDistance))
+        {
+            toTarget = hit.distance;
+            distanceFromTarget = toTarget;
+
+            // ✅ Check if the object has a DoorController
+            DoorController door = hit.collider.GetComponent<DoorController>();
+
+            if (door != null)
+            {
+                // Activate crosshair when looking at a door
+                UIController.uiActive = true;
+
+                // When player presses Left Mouse Button → toggle door
+                if (Input.GetMouseButtonDown(0))
+                {
+                    door.ToggleDoor();
+                }
+            }
+            else
+            {
+                // Not looking at a door → disable crosshair
+                UIController.uiActive = false;
+            }
+        }
+        else
+        {
+            // Nothing hit by ray → disable crosshair
+            UIController.uiActive = false;
+        }
+    }
+}
