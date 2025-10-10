@@ -1,0 +1,13 @@
+using UnityEngine;
+
+public class UIController : MonoBehaviour
+{
+    public static bool uiActive;
+    [SerializeField] GameObject interactCross;
+
+    void Update()
+    {
+        // Show only when looking at door (controlled by Raycasting)
+        interactCross.SetActive(uiActive);
+    }
+}
